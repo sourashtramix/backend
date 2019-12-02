@@ -1,0 +1,30 @@
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://me.karthisgk.be/"
+  },
+  "headline": "karthisgk",
+  "image": [
+    "https://me.karthisgk.be/assets/images/art1.jpg",
+    "https://me.karthisgk.be/assets/images/art2.jpg",
+    "https://me.karthisgk.be/assets/images/art3.jpg",
+    "https://me.karthisgk.be/assets/images/art4.jpg"
+   ],
+  "datePublished": "2019-04-29T08:00:00+08:00",
+  "dateModified": "2019-04-29T09:20:00+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "karthi sgk"
+  },
+   "publisher": {
+    "@type": "Organization",
+    "name": "karthisgk",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://me.karthisgk.be/assets/images/bg.jpg"
+    }
+  },
+  "description": ""
+}

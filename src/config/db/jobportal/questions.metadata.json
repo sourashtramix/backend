@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"jobportal.questions"}],"uuid":"e7c25319814e4e23a5c0f08225ca16f9"}
