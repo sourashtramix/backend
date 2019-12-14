@@ -1,4 +1,5 @@
 var ObjectId = require('mongodb').ObjectId;
+const mongoose = require('mongoose');
 var SMTP = require('../config/SMTPmailConfig.js');
 var multer  = require('multer');
 var path = require('path');
@@ -201,17 +202,18 @@ var responses = [
 	},
 	{
 			code: codeKey + '045',
-			message: 'wait untill, admin will activate your account',
+			message: 'not yet chat',
 			data: {}
 	},
 	{
-			code: codeKey + '046',
-			message: 'Your video not yet approved.',
-			data: {}
+		code: codeKey + '046',
+		message: 'users not yet liked each other',
+		data: {}
 	}
 ];
 
 var common = {
+	userProjection: { $project : { password: 0, verificationMail : 0 , accessToken : 0 } },
 	encrypt: encrypt,
 	decrypt: decrypt,
 	frontEndUrl: 'http://localhost:8080/',
@@ -244,7 +246,7 @@ var common = {
 	   return t;   
 	},
 	getMongoObjectId: function(){
-		return new ObjectId().toString();
+		return mongoose.Types.ObjectId().toString();
 	},
 	getUserType: function(ind){
 		var UserType = [ 1,2 ];
@@ -284,6 +286,15 @@ var common = {
 			}
 		});
 		return rt;
+	},
+	getPassFields: function(passField = [], actualFields = {}) {
+		var fields = {};
+		Object.keys(actualFields).forEach(key => {
+			if(passField.indexOf(key) > -1){
+				fields[key] = actualFields[key];
+			}
+		});
+		return fields;
 	},
 	getCrptoToken: function(n = 16){
 		return crypto.randomBytes(n).toString('hex');

@@ -1,5 +1,6 @@
 
 const MongoClient = require('mongodb').MongoClient;
+const mongoose = require('mongoose');
 const assert = require('assert');
 var collection = require('./collections.js');
 
@@ -51,6 +52,16 @@ DB.prototype.insert = function(tbName, data, cb) {
 			});
 		}
 	});
+	/*var schemaObject = {};
+	Object.keys(data).forEach(key => {
+		schemaObject[key] = data[key].constructor;
+	});
+	const Model = mongoose.model(tbName, new mongoose.Schema(schemaObject));
+	var doc = new Model(data);
+	doc.save().then(result => cb(false, result)).catch(err => {
+      	if(err)
+      		console.log(err);
+    });*/
 };
 
 DB.prototype.update = function(tbName, wh, data, cb){

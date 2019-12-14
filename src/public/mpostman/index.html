@@ -1,0 +1,267 @@
+
+<style>
+.form-group {
+	margin: auto;
+	padding: 10px;
+	width: 50%;
+}
+
+.form-group input[type="text"] {
+	width: 100%;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+.text-center {
+	text-align: center;
+}
+
+</style>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<form action="http://localhost:5000" method="post" enctype="multipart/form-data">
+	<input type="file" name="avatar" />
+	<label>_id</label>
+	<input type="text" name="_id" value="5c63009607a40b3c65069a1a" />
+</form>
+
+<button type="button" onclick="smix.makeField()" >create data</button>
+
+
+
+<script type="text/javascript" src="plug.js"></script>
+<script src="socket.io.js"></script>
+<script type="text/javascript">
+
+var defUrl = 'http://localhost:5000/';
+
+/*window.node = io.connect( 'http://me.karthisgk.be/' );
+node.on('chat', data => {
+    console.log(data);
+});*/
+$(document).ready(()=>{
+	
+});
+function click() {
+	
+}
+
+function getMe() {
+	$ajx({
+		path: 'http://13.232.133.211/getme',
+		method: 'get',
+		token: 'b297bd4f024b121cfb81cebe632017766593e084185e515dc40826bc62f3228f'
+	}, {});
+}
+
+function getMessage(){
+	$ajx({
+		path: 'http://13.232.133.211/getmessage/c8b42f39b4035667',
+		method: 'post',
+		token: 'b297bd4f024b121cfb81cebe632017766593e084185e515dc40826bc62f3228f'
+	}, {});
+}
+
+function sendMessage(message) {
+	$ajx({
+		path: 'http://13.232.133.211/sendmessage',
+		method: 'post',
+		token: 'b297bd4f024b121cfb81cebe632017766593e084185e515dc40826bc62f3228f'
+	}, {message: message, sendTo: '5d2ad4502e69683cc18dac18'});
+}
+
+console.log("var fd = new FormData();\n\
+fd.append('mobileNumber', '90951694128');\n\
+fd.append('firstName', 'karthi sg')\n\
+fd.append('photoUrl', document.getElementsByTagName('input')[0].files[0])\n\
+var xhr = new XMLHttpRequest();\n\
+xhr.open('post', 'http://13.233.208.206/oauthsignin');\n\
+xhr.send(fd)");
+console.log("$ajx({\n\
+		path: 'http://13.232.133.211/sendmessage',\n\
+		method: 'post',\n\
+		token: 'b297bd4f024b121cfb81cebe632017766593e084185e515dc40826bc62f3228f'\n\
+	}, {message: message, sendTo: '5d2ad4502e69683cc18dac18'}");
+var smix = {
+	apiUrl: 'http://localhost:5000/',
+	getLocationData: function() {
+		return {
+			address: 'Madurai, Tamilnadu',
+			lat: 3.77879879,
+			lng: 78.0900778
+		}
+	},
+	makeField: function() {
+		var testData = this.getTestData();
+		const parent = $('<div class="custom-smix-data"></div>');
+		Object.keys(testData).forEach(key => {
+			if(key != 'location'){
+				const formGroup = $('<div class="form-group"></div>');
+				const label = $('<lable>'+key.toUpperCase()+':</lable><br />');
+				const input = $('<input type="'+(key == 'photoUrl' ? 'file' : 'text')+'" id="smix-'+key+'" value="'+testData[key]+'" />');
+				formGroup.append(label);
+				formGroup.append(input);
+				parent.append(formGroup);
+			}
+		});
+		const btn = $('<div class="form-group text-center"><button type="button" id="smix-add-user">Submit</button></div>');
+		parent.append(btn);
+		$('body').append(parent);
+		if(navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition((postition) => {
+				$('#smix-latitude').val(postition.coords.latitude);
+				$('#smix-longitude').val(postition.coords.longitude);
+			});
+		}
+		$('#smix-add-user').click(function() {
+			smix.getTestData = function() {
+				const files = document.getElementById('smix-photoUrl').files;
+				var rtrn = {
+					photoUrl: files.length > 0 ? files[0] : ''
+				};
+				Object.keys(testData).forEach(key => {
+					if(key != 'location' &&  key != 'photoUrl'){
+						rtrn[key] = $('#smix-'+key).val();
+					}
+				});
+				return rtrn;
+			};
+			smix.OAuthSignin();
+		});
+	},
+	getTestData: function() {
+		const location = this.getLocationData();
+		const files = document.getElementsByTagName('input')[0].files;
+		return {
+			photoUrl: files.length > 0 ? files[0] : '',
+			firstName: 'karthick',
+			lastName: 'sg',
+			emailId: 'karthisg.sg@gmail.com',
+			mobileNumber: '9876543210',
+			gender: 'm',
+			age: '26',
+			location: location,
+			address: location.address,
+			latitude: location.lat,
+			longitude: location.lng
+		};
+	},
+	getTestAccessToken: function() {
+		return 'f359865c3c3077be1f791a995430d34bb71b80cf80a1894da6c52c0d765dd93d';
+	},
+	checkExistUser: function() {
+		$ajx({
+			path: this.apiUrl + 'user/checkuserexist',
+			method: 'post'
+		}, {emailId: this.getTestData().emailId});
+	},
+	OAuthSignin: function() {
+		const formData = new FormData();
+		var testData = this.getTestData();
+		Object.keys(testData).forEach(key => {
+			if(key != 'location'){
+				formData.append(key, testData[key]);
+			}
+		});
+		var xhr = new XMLHttpRequest();
+		xhr.open('post', this.apiUrl + 'user/oauthsignin');
+		xhr.send(formData);
+	},
+	updateUser: function() {
+		const formData = new FormData();
+		var testData = this.getTestData();
+		Object.keys(testData).forEach(key => {
+			if(key != 'location'){
+				formData.append(key, testData[key]);
+			}
+		});
+		var xhr = new XMLHttpRequest();
+		xhr.open('post', this.apiUrl + 'user/updateuser');
+		xhr.setRequestHeader('token', this.getTestAccessToken());
+		xhr.send(formData);
+	},
+	logOut: function(){
+		$ajx({
+			path: this.apiUrl + 'user/logout',
+			token: this.getTestAccessToken()
+		},{});
+	},
+	getMe: function(){
+		$ajx({
+			path: this.apiUrl + 'user/getme',
+			token: this.getTestAccessToken()
+		},{});
+	},
+	getNearByUsers: function() {
+		$ajx({
+			path: this.apiUrl + 'user/getnearbyusers',
+			method: 'post',
+			token: this.getTestAccessToken()
+		},{gender: 'm'});
+	},
+	hitLike: function(){
+		$ajx({
+			path: this.apiUrl + 'user/hitlike',
+			method: 'post',
+			token: this.getTestAccessToken()
+		},{userId: '5df4ea9256bf99264038a387'});
+	},
+	hitUnLike: function(){
+		$ajx({
+			path: this.apiUrl + 'user/hitunlike',
+			method: 'post',
+			token: this.getTestAccessToken()
+		},{userId: '5df39cc71ec78186dd1328f3'});
+	},
+	getUnLikedUsers: function(){
+		$ajx({
+			path: this.apiUrl + 'user/getunlikedusers',
+			method: 'post',
+			token: this.getTestAccessToken()
+		},{});
+	},
+	getWhoLikes: function(){
+		$ajx({
+			path: this.apiUrl + 'user/getwholikes',
+			method: 'post',
+			token: this.getTestAccessToken()
+		},{});
+	},
+	getMatchedUsers: function() {
+		$ajx({
+			path: this.apiUrl + 'user/getmatchedusers',
+			method: 'post',
+			token: this.getTestAccessToken()
+		},{});
+	},
+	sendMessage: function(msg = 'hi') {
+		$ajx({
+			path: this.apiUrl + 'chat/sendmessage',
+			method: 'post',
+			token: this.getTestAccessToken()
+		},{userId: '5df382178b5486fae385531a', message: msg});
+	},
+	getMessages: function(msg = 'hi') {
+		$ajx({
+			path: this.apiUrl + 'chat/getmessages',
+			method: 'post',
+			token: this.getTestAccessToken()
+		},{userId: '5df382178b5486fae385531a',offset: 0, limit: 20});
+	},
+	deleteMessage: function(msg = 'hi') {
+		$ajx({
+			path: this.apiUrl + 'chat/deletemessage',
+			method: 'post',
+			token: this.getTestAccessToken()
+		},{conversationId: '09fb84c2a5831666', messageIds: []});
+	},
+	deleteAllMessage: function(msg = 'hi') {
+		$ajx({
+			path: this.apiUrl + 'chat/deleteallmessage',
+			method: 'post',
+			token: this.getTestAccessToken()
+		},{conversationId: '09fb84c2a5831666'});
+	}
+}
+
+</script>
